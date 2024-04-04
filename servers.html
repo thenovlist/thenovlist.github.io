@@ -1,18 +1,209 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>thenovlist | Servers</title>
-    <link rel="stylesheet" href="index.css">
-</head>
-<body>
-    <nav>
-        <a href="index.html">Home</a> |
-        <a href="servers.html">Servers</a> |
-        <a href="rules.html">Rules</a> |
-    </nav>
+    <head>
+        <title>thenovlist | Servers</title>
+        <link rel="stylesheet" href="index.css">
+        <link rel="icon" type="image/x-icon" href="/img/favicon.png">
+        <style>
+            div {
+                font-family: Arial,Helvetica,sans-serif;
+            }
 
-    <h1>thenovlist Servers</h1>
-    <a href="Serverform.html">Create a server</a>
-    <div>Welcome to thenovlist! There are no servers as of now. Functionality soon.<br><br></div>
-</body>
+            h1 {
+                font-family: Arial,Helvetica,sans-serif;
+            }
+
+            ol {
+                font-family: Arial,Helvetica,sans-serif;
+            }
+
+            form {
+                font-family: Arial,Helvetica,sans-serif;
+            }
+
+            a {
+                font-family: Arial,Helvetica,sans-serif;
+                text-decoration: none;
+            }
+
+            ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                overflow: hidden;
+                background-color: #114081;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+            ul li {
+                float: left;
+            }
+            ul a {
+                font-family: Arial,Helvetica,sans-serif;
+                display: block;
+                color: white;
+                text-align: center;
+                padding: 8px 16px;
+                text-decoration: none;
+            }
+
+            ul a:hover {
+                background-color: #0F3970;
+            }
+
+            li img {
+
+                height: 30px;
+                vertical-align: middle;
+            }
+            .card {
+                box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+                transition: 0.3s;
+                width:13%
+            }
+            .card:hover {
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            }
+
+            .container {
+                padding: 2px 16px;
+            }
+
+            #allNames {
+                display: none;
+            }
+
+            #errorMessage {
+                display: none;
+                color: red;
+            }
+
+            #loader {
+                width: 50px;
+                height: 50px;
+                margin: auto;
+                margin-top: 40px;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(0deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <ul>
+            <li><img src="img/logo.png"></li>
+            <li><a href="index.html">My thenovlist</a></li>
+            <li><a href="servers.html">Servers</a></li>
+            <li><a href="rules.html">Rules</a></li>
+        </ul>
+        <br>
+        <hr>
+        <div>Welcome to the testing version of thenovlist!</div>
+        <hr>
+        <br>
+
+        <h1>thenovlist Servers</h1>
+        <a href="Serverform.html">Create a server</a>
+        <div><br><br>Welcome to thenovlist! Server List is V2.<br><br></div>
+
+        <div>Currently if you wanna join a server, you must copy the URI link into another tab in your browser. (You need to set up the URI on your Novetus launcher.)<br><br></div>
+
+        <a href='uriinstalltutorial.html'>URI Install Tutorial</a>
+
+        <br><br>
+        <hr>
+        <div id="display">
+            <div id="loader">
+                <h4> Loading</h4>
+            </div>
+            <div id="allGames">
+            </div>
+            <div id="errorMessage">
+                <h2> Failed to get data. Please refresh </h2>
+            </div>
+        </div>
+        <hr>
+        <div>Thats all the servers...</div>
+        <script>
+            let allNamesElm = document.getElementById("allGames")
+            let loaderElm = document.getElementById("loader")
+            let errorMessageElm = document.getElementById("errorMessage")
+
+            function setErrorDisplay() {
+                loaderElm.style.display = "none"
+                allNamesElm.style.display = "none"
+                errorMessageElm.style.display = "block"
+            }
+
+            fetch("https://api.apispreadsheets.com/data/rGSA5tp2TenesWd2/").then(res => {
+                if (res.status === 200) {
+                    res.json().then(data => {
+
+                        const yourData = data
+                        for (let i = 0; i < yourData.length; i++) {
+                            let rowInfo = yourData[i]
+                            let rowInfoDiv = document.createElement("div")
+                            rowInfoDiv.classList.add("card")
+
+                            let logo = document.createElement("img")
+                            logo.src = "img/logo.png"
+
+                            let rowName = document.createElement("h4")
+                            let rowNameNode = document.createTextNode(rowInfo["title"])
+                            rowName.appendChild(rowNameNode)
+                            rowName.classList.add("title")
+
+                            let rowWritten = document.createElement("p")
+                            let rowWrittenNode = document.createTextNode(rowInfo["desc"])
+                            rowWritten.appendChild(rowWrittenNode)
+                            rowWritten.classList.add("desc")
+
+                            let rowButton = document.createElement("a")
+                            let rowButtonNode = document.createTextNode(rowInfo["uri"])
+                            rowWritten.appendChild(rowButtonNode)
+                            rowWritten.classList.add("uri")
+                            //rowButton.href = data["uri"]
+
+                            rowInfoDiv.appendChild(logo)
+                            rowInfoDiv.appendChild(rowName)
+                            rowInfoDiv.appendChild(rowWritten)
+                            rowInfoDiv.appendChild(rowButton)
+
+                            allNamesElm.appendChild(rowInfoDiv)
+                        }
+
+                        loaderElm.style.display = "none"
+                        allNamesElm.style.display = "block"
+                        errorMessageElm.style.display = "none"
+
+                    }).catch(err => {
+                        setErrorDisplay()
+                    })
+                }
+                else {
+                    setErrorDisplay()
+                }
+            }).catch(err => {
+                setErrorDisplay()
+            })
+        </script>
+        <div class="card">
+            <img src="img/logo.png" alt="Thenovlist Logo" style="width:100%">
+            <div class="container">
+                <div><b>Game Title</b></div>
+                <div>Game Description</div>
+                <br>
+                <a href='uriinstalltutorial.html'><div><img src="img/playLight.png"></div></a>
+            </div>
+        </div>
+    </body>
 </html>
